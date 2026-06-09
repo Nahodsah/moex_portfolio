@@ -3,6 +3,7 @@ import pandas as pd
 from scipy.optimize import Bounds, LinearConstraint, minimize
 
 from .exceptions import PortfolioOptimizationError
+from .decorators import execution_time
 
 
 def portfolio_variance(weights: np.ndarray, covariance: np.ndarray) -> float:
@@ -21,6 +22,7 @@ def portfolio_variance_gradient(
 class MinimumVarianceOptimizer:
     """Находит портфель минимальной дисперсии."""
 
+    @execution_time
     def optimize(self, returns: pd.DataFrame) -> pd.Series:
         if returns.empty:
             raise PortfolioOptimizationError("Таблица доходностей пуста")

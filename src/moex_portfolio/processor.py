@@ -2,6 +2,7 @@ import pandas as pd
 
 from .data_source import MoexCSVDataSource
 from .exceptions import EmptyDataError, MissingDateError
+from .decorators import execution_time
 
 
 class MarketDataProcessor:
@@ -39,6 +40,7 @@ class MarketDataProcessor:
 
         return tables
 
+    @execution_time
     def concat_price_tables(self) -> pd.DataFrame:
         """Объединяет таблицы цен закрытия по общим датам."""
         tables = self.load_tables()
@@ -49,11 +51,13 @@ class MarketDataProcessor:
         return pd.concat(tables, axis=1, join="inner").sort_index()
 
     @staticmethod
+    @execution_time
     def calc_returns(prices: pd.DataFrame) -> pd.DataFrame:
         """Возвращает недельную доходность."""
         return prices.pct_change().dropna()
 
     @staticmethod
+    @execution_time
     def calc_cov_matrix(returns: pd.DataFrame) -> pd.DataFrame:
         """Вычисляет ковариационную матрицу."""
         return returns.cov()
